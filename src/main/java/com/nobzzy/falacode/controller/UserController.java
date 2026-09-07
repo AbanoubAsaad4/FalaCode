@@ -2,6 +2,7 @@ package com.nobzzy.falacode.controller;
 
 import com.nobzzy.falacode.dto.UserDto;
 import com.nobzzy.falacode.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
@@ -20,7 +21,7 @@ public class UserController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<UserDto> getUserById(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
     }
 
@@ -38,7 +39,7 @@ public class UserController {
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id,@Valid @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.updateUser(id, userDto));
     }
 

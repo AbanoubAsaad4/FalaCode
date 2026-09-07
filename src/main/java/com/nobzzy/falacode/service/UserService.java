@@ -2,13 +2,16 @@ package com.nobzzy.falacode.service;
 
 import com.nobzzy.falacode.dto.UserDto;
 import com.nobzzy.falacode.entity.User;
+import com.nobzzy.falacode.exception.EmailAlreadyExistsException;
 import com.nobzzy.falacode.exception.ResourceNotFoundException;
 import com.nobzzy.falacode.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
@@ -19,12 +22,16 @@ public class UserService {
 
     // CREATE
     public UserDto createUser(UserDto userDto) {
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new EmailAlreadyExistsException("Email is already registered.");
+        }
         User user = mapToEntity(userDto);
         User savedUser = userRepository.save(user);
         return mapToDto(savedUser);
     }
 
     // READ ALL
+    @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(this::mapToDto)
@@ -32,6 +39,7 @@ public class UserService {
     }
 
     // READ BY ID
+    @Transactional(readOnly = true)
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         return mapToDto(user);
@@ -61,9 +69,9 @@ public class UserService {
     private User mapToEntity(UserDto userDto) {
         User user = new User();
         user.setId(userDto.getId());
-        user.setName(userDto.getEmail());
+        user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
-        user.setPassword("");
+        user.setPassword("default_hashed_password");
         return user;
     }
 

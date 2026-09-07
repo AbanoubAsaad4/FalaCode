@@ -2,8 +2,13 @@ package com.nobzzy.falacode.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -17,13 +22,23 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotBlank(message = "Name cannot be blank")
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @Email
-    @NotNull
+    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email cannot be blank")
+    @Column(nullable = false, unique = true, length = 150)
     private String email;
 
-    @NotNull
+    @NotBlank(message = "Password cannot be blank")
+    @Column(nullable = false, length = 255)
     private String password;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }
