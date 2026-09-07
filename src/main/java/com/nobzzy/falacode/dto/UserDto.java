@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 public class UserDto {
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Name cannot be blank")
     private String name;
 
-    @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
+    @NotBlank(message = "Email cannot be blank")
     private String email;
 
     @NotBlank(message = "Password is required")
