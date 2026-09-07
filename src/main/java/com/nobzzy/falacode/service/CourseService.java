@@ -29,7 +29,8 @@ public class CourseService {
 
     // READ ALL
     public List<CourseDto> getAllCourses() {
-        return courseRepository.findAll().stream()
+        return courseRepository.findAll()
+                .stream()
                 .map(this::mapToDto)
                 .toList();
     }
