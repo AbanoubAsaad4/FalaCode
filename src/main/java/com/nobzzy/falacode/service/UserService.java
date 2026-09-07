@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly=true)
 public class UserService {
 
     private final UserRepository userRepository;
@@ -21,6 +21,7 @@ public class UserService {
     }
 
     // CREATE
+    @Transactional
     public UserDto createUser(UserDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new EmailAlreadyExistsException("Email is already registered.");
@@ -31,7 +32,6 @@ public class UserService {
     }
 
     // READ ALL
-    @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(this::mapToDto)
@@ -39,13 +39,13 @@ public class UserService {
     }
 
     // READ BY ID
-    @Transactional(readOnly = true)
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         return mapToDto(user);
     }
 
     // UPDATE
+    @Transactional
     public UserDto updateUser(Long id, UserDto userDto) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
@@ -58,6 +58,7 @@ public class UserService {
     }
 
     // DELETE
+    @Transactional
     public void deleteUser(Long id) {
         if(!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User not found with id: " + id);
