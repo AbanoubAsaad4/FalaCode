@@ -5,6 +5,7 @@ import com.nobzzy.falacode.entity.User;
 import com.nobzzy.falacode.exception.EmailAlreadyExistsException;
 import com.nobzzy.falacode.exception.ResourceNotFoundException;
 import com.nobzzy.falacode.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,7 @@ public class UserService {
 
     // CREATE
     @Transactional
-    public UserDto createUser(UserDto userDto) {
+    public UserDto createUser(@Valid UserDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new EmailAlreadyExistsException("Email is already registered.");
         }
@@ -46,7 +47,7 @@ public class UserService {
 
     // UPDATE
     @Transactional
-    public UserDto updateUser(Long id, UserDto userDto) {
+    public UserDto updateUser(Long id,@Valid UserDto userDto) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
@@ -68,19 +69,19 @@ public class UserService {
 
     // MAPPERS
     private User mapToEntity(UserDto userDto) {
-        User user = new User();
-        user.setId(userDto.getId());
-        user.setName(userDto.getName());
-        user.setEmail(userDto.getEmail());
-        user.setPassword("default_hashed_password");
-        return user;
+        return User.builder()
+                .id(userDto.getId())
+                .name(userDto.getName())
+                .email(userDto.getEmail())
+                .password(userDto.getPassword())
+                .build();
     }
 
     private UserDto mapToDto(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setName(user.getName());
-        userDto.setEmail(user.getEmail());
-        return userDto;
+        return UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
     }
 }
