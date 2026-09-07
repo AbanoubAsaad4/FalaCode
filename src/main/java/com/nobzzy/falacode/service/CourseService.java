@@ -2,6 +2,7 @@ package com.nobzzy.falacode.service;
 
 import com.nobzzy.falacode.dto.CourseDto;
 import com.nobzzy.falacode.entity.Course;
+import com.nobzzy.falacode.entity.Module;
 import com.nobzzy.falacode.exception.ResourceNotFoundException;
 import com.nobzzy.falacode.repository.CourseRepository;
 import org.springframework.stereotype.Service;
@@ -84,6 +85,9 @@ public class CourseService {
                 .description(course.getDescription())
                 .isPublished(course.isPublished())
                 .displayOrder(course.getDisplayOrder())
+                .modules(course.getModules() != null
+                        ? course.getModules().stream().map(Module::getId).toList()
+                        : List.of())
                 .createdAt(course.getCreatedAt())
                 .updatedAt(course.getUpdatedAt())
                 .build();
