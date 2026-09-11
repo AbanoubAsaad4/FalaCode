@@ -51,6 +51,10 @@ public class UserService {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
+        if (!existingUser.getEmail().equals(userDto.getEmail()) && userRepository.existsByEmail(userDto.getEmail())) {
+            throw new EmailAlreadyExistsException("Email is already registered.");
+        }
+
         existingUser.setName(userDto.getName());
         existingUser.setEmail(userDto.getEmail());
 
