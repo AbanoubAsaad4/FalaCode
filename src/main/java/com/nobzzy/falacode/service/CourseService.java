@@ -51,7 +51,7 @@ public class CourseService {
 
         existingCourse.setTitle(courseDto.getTitle());
         existingCourse.setDescription(courseDto.getDescription());
-        existingCourse.setPublished(courseDto.isPublished());
+        existingCourse.setPublished(courseDto.getPublished());
         existingCourse.setDisplayOrder(courseDto.getDisplayOrder());
 
         Course updatedCourse = courseRepository.save(existingCourse);
@@ -73,7 +73,7 @@ public class CourseService {
                 .id(courseDto.getId())
                 .title(courseDto.getTitle())
                 .description(courseDto.getDescription())
-                .isPublished(courseDto.isPublished())
+                .isPublished(courseDto.getPublished())
                 .displayOrder(courseDto.getDisplayOrder())
                 .build();
     }
@@ -83,7 +83,7 @@ public class CourseService {
                 .id(course.getId())
                 .title(course.getTitle())
                 .description(course.getDescription())
-                .isPublished(course.isPublished())
+                .published(course.isPublished())
                 .displayOrder(course.getDisplayOrder())
                 .modules(course.getModules() != null
                         ? course.getModules().stream().map(Module::getId).toList()

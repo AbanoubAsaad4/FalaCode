@@ -22,7 +22,7 @@ public class CourseDto {
     private String title;
 
     private String description;
-    private boolean isPublished;
+    private Boolean published;
     private Integer displayOrder;
     private List<Long> modules;
     private LocalDateTime createdAt;
