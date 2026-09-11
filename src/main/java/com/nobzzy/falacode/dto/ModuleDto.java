@@ -21,7 +21,7 @@ public class ModuleDto {
     private String title;
 
     private String description;
-    private boolean isPublished;
+    private Boolean published;
     private Integer displayOrder;
     private Long courseId;
     private LocalDateTime createdAt;

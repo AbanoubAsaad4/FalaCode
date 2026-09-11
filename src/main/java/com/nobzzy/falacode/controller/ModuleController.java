@@ -49,6 +49,7 @@ public class ModuleController {
         return new ResponseEntity<>(moduleService.updateModule(moduleId, moduleDto), HttpStatus.OK);
     }
 
+    // MOVE MODULE TO COURSE
     @PutMapping("/modules/{moduleId}/move-to-course/{courseId}")
     public ResponseEntity<ModuleDto> moveModuleToCourse(@PathVariable Long moduleId,@PathVariable Long courseId) {
         return new ResponseEntity<>(moduleService.moveModuleToCourse(moduleId, courseId), HttpStatus.OK);

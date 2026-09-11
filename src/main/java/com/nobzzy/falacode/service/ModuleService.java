@@ -69,7 +69,7 @@ public class ModuleService {
 
         module.setTitle(moduleDto.getTitle());
         module.setDescription(moduleDto.getDescription());
-        module.setPublished(moduleDto.isPublished());
+        module.setPublished(moduleDto.getPublished());
         module.setDisplayOrder(moduleDto.getDisplayOrder());
 
         Module savedModule = moduleRepository.save(module);
@@ -105,7 +105,7 @@ public class ModuleService {
                 .id(moduleDto.getId())
                 .title(moduleDto.getTitle())
                 .description(moduleDto.getDescription())
-                .isPublished(moduleDto.isPublished())
+                .isPublished(moduleDto.getPublished())
                 .displayOrder(moduleDto.getDisplayOrder())
                 .build();
     }
@@ -115,7 +115,7 @@ public class ModuleService {
                 .id(module.getId())
                 .title(module.getTitle())
                 .description(module.getDescription())
-                .isPublished(module.isPublished())
+                .published(module.isPublished())
                 .displayOrder(module.getDisplayOrder())
                 .courseId(module.getCourse() != null ? module.getCourse().getId() : null)
                 .createdAt(module.getCreatedAt())
