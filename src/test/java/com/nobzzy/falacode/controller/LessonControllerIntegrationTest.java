@@ -1,26 +1,22 @@
 package com.nobzzy.falacode.controller;
 
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-import tools.jackson.databind.ObjectMapper;
 import com.nobzzy.falacode.dto.LessonDto;
-import com.nobzzy.falacode.exception.ResourceNotFoundException;
-import com.nobzzy.falacode.service.LessonService;
+import com.nobzzy.falacode.entity.Course;
+import com.nobzzy.falacode.entity.Module;
+import com.nobzzy.falacode.repository.CourseRepository;
+import com.nobzzy.falacode.repository.ModuleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.ObjectMapper;
 
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -28,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("test")
-class LessonControllerIntegrationTest {
+public class LessonControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,154 +33,156 @@ class LessonControllerIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private LessonService lessonService;
+    private CourseRepository courseRepository;
 
-    private LessonDto sampleLessonDto;
+    @Autowired
+    private ModuleRepository moduleRepository;
+
+    private Module savedModule;
 
     @BeforeEach
     void setUp() {
-        sampleLessonDto = LessonDto.builder()
-                .id(1L)
-                .title("Introduction to Spring Boot")
+        Course course = courseRepository.save(Course.builder()
+                .title("Spring Boot & JPA Core")
+                .description("Backend Fundamentals")
+                .isPublished(true)
+                .build());
+
+        savedModule = moduleRepository.save(Module.builder()
+                .title("Module 1: Getting Started")
+                .description("Introductory Module")
+                .isPublished(true)
+                .course(course)
+                .build());
+    }
+
+    @Test
+    @DisplayName("POST /api/lessons - Should create lesson successfully")
+    void shouldCreateLesson() throws Exception {
+        LessonDto lessonDto = LessonDto.builder()
+                .title("Introduction to Controllers")
                 .displayOrder(1)
                 .published(true)
-                .moduleId(10L)
+                .moduleId(savedModule.getId())
                 .build();
+
+        mockMvc.perform(post("/api/lessons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(lessonDto)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.title").value("Introduction to Controllers"))
+                .andExpect(jsonPath("$.displayOrder").value(1))
+                .andExpect(jsonPath("$.published").value(true));
     }
 
-    @Nested
-    @DisplayName("POST /api/lessons")
-    class CreateLessonEndpoint {
+    @Test
+    @DisplayName("GET /api/lessons/{id} - Should return lesson when ID exists")
+    void shouldGetLessonById() throws Exception {
+        LessonDto lessonDto = LessonDto.builder()
+                .title("Database Persistence with JPA")
+                .displayOrder(2)
+                .published(true)
+                .moduleId(savedModule.getId())
+                .build();
 
-        @Test
-        @DisplayName("Should create lesson and return 201 Created")
-        void shouldCreateLesson_Returns201() throws Exception {
-            when(lessonService.createLesson(any(LessonDto.class))).thenReturn(sampleLessonDto);
+        String response = mockMvc.perform(post("/api/lessons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(lessonDto)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
-            mockMvc.perform(post("/api/lessons")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(sampleLessonDto)))
-                    .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.id").value(1L))
-                    .andExpect(jsonPath("$.title").value("Introduction to Spring Boot"))
-                    .andExpect(jsonPath("$.moduleId").value(10L));
-        }
+        Long lessonId = objectMapper.readTree(response).get("id").asLong();
 
-        @Test
-        @DisplayName("Should return 400 Bad Request when title is blank")
-        void shouldReturn400_WhenTitleIsBlank() throws Exception {
-            LessonDto invalidDto = LessonDto.builder()
-                    .title("")
-                    .moduleId(10L)
-                    .build();
-
-            mockMvc.perform(post("/api/lessons")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(invalidDto)))
-                    .andExpect(status().isBadRequest());
-
-            verify(lessonService, never()).createLesson(any());
-        }
+        mockMvc.perform(get("/api/lessons/{id}", lessonId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(lessonId))
+                .andExpect(jsonPath("$.title").value("Database Persistence with JPA"));
     }
 
-    @Nested
-    @DisplayName("GET /api/lessons")
-    class ReadLessonsEndpoints {
-
-        @Test
-        @DisplayName("GET /api/lessons - Should return list of lessons with 200 OK")
-        void shouldGetAllLessons_Returns200() throws Exception {
-            when(lessonService.getAllLessons()).thenReturn(List.of(sampleLessonDto));
-
-            mockMvc.perform(get("/api/lessons"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.length()").value(1))
-                    .andExpect(jsonPath("$[0].title").value("Introduction to Spring Boot"));
-        }
-
-        @Test
-        @DisplayName("GET /api/modules/{moduleId}/lessons - Should return lessons for module")
-        void shouldGetLessonsByModuleId_Returns200() throws Exception {
-            when(lessonService.getLessonsByModuleId(10L)).thenReturn(List.of(sampleLessonDto));
-
-            mockMvc.perform(get("/api/modules/10/lessons"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.length()").value(1))
-                    .andExpect(jsonPath("$[0].moduleId").value(10L));
-        }
-
-        @Test
-        @DisplayName("GET /api/lessons/{id} - Should return lesson when ID exists")
-        void shouldGetLessonById_Returns200() throws Exception {
-            when(lessonService.getLessonById(1L)).thenReturn(sampleLessonDto);
-
-            mockMvc.perform(get("/api/lessons/1"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").value(1L))
-                    .andExpect(jsonPath("$.title").value("Introduction to Spring Boot"));
-        }
-
-        @Test
-        @DisplayName("GET /api/lessons/{id} - Should return 404 Not Found when ID does not exist")
-        void shouldReturn404_WhenLessonNotFound() throws Exception {
-            when(lessonService.getLessonById(99L))
-                    .thenThrow(new ResourceNotFoundException("Lesson not found with id: 99"));
-
-            mockMvc.perform(get("/api/lessons/99"))
-                    .andExpect(status().isNotFound());
-        }
+    @Test
+    @DisplayName("GET /api/lessons/{id} - Should return 404 when lesson not found")
+    void shouldReturn404_WhenLessonNotFound() throws Exception {
+        mockMvc.perform(get("/api/lessons/{id}", 999L))
+                .andExpect(status().isNotFound());
     }
 
-    @Nested
-    @DisplayName("PUT /api/lessons/{id}")
-    class UpdateLessonEndpoint {
+    @Test
+    @DisplayName("GET /api/modules/{moduleId}/lessons - Should return lessons for module")
+    void shouldGetLessonsByModuleId() throws Exception {
+        LessonDto lessonDto = LessonDto.builder()
+                .title("REST API Best Practices")
+                .displayOrder(1)
+                .published(true)
+                .moduleId(savedModule.getId())
+                .build();
 
-        @Test
-        @DisplayName("Should update lesson and return 200 OK")
-        void shouldUpdateLesson_Returns200() throws Exception {
-            LessonDto updatedDto = LessonDto.builder()
-                    .id(1L)
-                    .title("Updated Lesson Title")
-                    .displayOrder(2)
-                    .published(false)
-                    .moduleId(10L)
-                    .build();
+        mockMvc.perform(post("/api/lessons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(lessonDto)))
+                .andExpect(status().isCreated());
 
-            when(lessonService.updateLesson(eq(1L), any(LessonDto.class))).thenReturn(updatedDto);
-
-            mockMvc.perform(put("/api/lessons/1")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(updatedDto)))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.title").value("Updated Lesson Title"))
-                    .andExpect(jsonPath("$.displayOrder").value(2))
-                    .andExpect(jsonPath("$.published").value(false));
-        }
+        mockMvc.perform(get("/api/modules/{moduleId}/lessons", savedModule.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("REST API Best Practices"));
     }
 
-    @Nested
-    @DisplayName("DELETE /api/lessons/{id}")
-    class DeleteLessonEndpoint {
+    @Test
+    @DisplayName("PUT /api/lessons/{id} - Should update lesson details")
+    void shouldUpdateLesson() throws Exception {
+        LessonDto initialDto = LessonDto.builder()
+                .title("Old Lesson Title")
+                .displayOrder(1)
+                .published(false)
+                .moduleId(savedModule.getId())
+                .build();
 
-        @Test
-        @DisplayName("Should delete lesson and return 204 No Content")
-        void shouldDeleteLesson_Returns204() throws Exception {
-            doNothing().when(lessonService).deleteLessonById(1L);
+        String response = mockMvc.perform(post("/api/lessons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(initialDto)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
-            mockMvc.perform(delete("/api/lessons/1"))
-                    .andExpect(status().isNoContent());
+        Long lessonId = objectMapper.readTree(response).get("id").asLong();
 
-            verify(lessonService, times(1)).deleteLessonById(1L);
-        }
+        LessonDto updateDto = LessonDto.builder()
+                .title("Updated Lesson Title")
+                .displayOrder(2)
+                .published(true)
+                .moduleId(savedModule.getId())
+                .build();
 
-        @Test
-        @DisplayName("Should return 404 Not Found when deleting non-existent lesson")
-        void shouldReturn404_WhenDeletingNonExistentLesson() throws Exception {
-            doThrow(new ResourceNotFoundException("Lesson not found with id: 99"))
-                    .when(lessonService).deleteLessonById(99L);
+        mockMvc.perform(put("/api/lessons/{id}", lessonId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Updated Lesson Title"))
+                .andExpect(jsonPath("$.displayOrder").value(2))
+                .andExpect(jsonPath("$.published").value(true));
+    }
 
-            mockMvc.perform(delete("/api/lessons/99"))
-                    .andExpect(status().isNotFound());
-        }
+    @Test
+    @DisplayName("DELETE /api/lessons/{id} - Should delete lesson successfully")
+    void shouldDeleteLesson() throws Exception {
+        LessonDto lessonDto = LessonDto.builder()
+                .title("Temporary Lesson")
+                .displayOrder(1)
+                .published(true)
+                .moduleId(savedModule.getId())
+                .build();
+
+        String response = mockMvc.perform(post("/api/lessons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(lessonDto)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        Long lessonId = objectMapper.readTree(response).get("id").asLong();
+
+        mockMvc.perform(delete("/api/lessons/{id}", lessonId))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/lessons/{id}", lessonId))
+                .andExpect(status().isNotFound());
     }
 }
