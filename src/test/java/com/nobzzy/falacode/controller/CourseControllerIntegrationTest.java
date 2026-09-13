@@ -2,6 +2,7 @@ package com.nobzzy.falacode.controller;
 
 import com.nobzzy.falacode.dto.CourseDto;
 import com.nobzzy.falacode.entity.Course;
+import com.nobzzy.falacode.entity.Module;
 import com.nobzzy.falacode.repository.CourseRepository;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -127,6 +128,28 @@ public class CourseControllerIntegrationTest {
 
         // Verify entity no longer exists
         mockMvc.perform(get("/api/courses/{id}", savedCourse.getId()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/courses/{id} - Should delete course and associated modules")
+    void shouldDeleteCourseAndAssociatedModules() throws Exception {
+        Course course = courseRepository.save(Course.builder()
+                .title("Course with Modules")
+                .isPublished(true)
+                .build());
+
+        Module module = Module.builder()
+                .title("Child Module")
+                .course(course)
+                .build();
+        course.getModules().add(module);
+        courseRepository.save(course);
+
+        mockMvc.perform(delete("/api/courses/{id}", course.getId()))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/courses/{id}", course.getId()))
                 .andExpect(status().isNotFound());
     }
 }

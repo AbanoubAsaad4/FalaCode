@@ -8,24 +8,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ModuleDto {
+public class LessonDto {
     private Long id;
 
     @NotBlank(message = "Title is required")
     @Size(max = 100, message = "Title cannot exceed 100 characters")
     private String title;
-
-    private String description;
-    private Boolean published;
     private Integer displayOrder;
-    private Long courseId;
-    private List<Long> lessons;
+    private Boolean published;
+    private Long moduleId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
