@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "lessons")
@@ -30,7 +32,11 @@ public class Lesson {
     private Module module;
 
     @Builder.Default
-    @Column(nullable = false)
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Exercise> exercises = new ArrayList<>();
+
+        @Builder.Default
+        @Column(nullable = false)
     private boolean isPublished = false;
 
     @CreationTimestamp

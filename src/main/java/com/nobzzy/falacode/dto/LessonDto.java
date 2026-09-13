@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -22,6 +23,7 @@ public class LessonDto {
     private Integer displayOrder;
     private Boolean published;
     private Long moduleId;
+    private List<Long> exercises;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

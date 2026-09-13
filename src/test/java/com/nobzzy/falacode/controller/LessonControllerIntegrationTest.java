@@ -2,8 +2,12 @@ package com.nobzzy.falacode.controller;
 
 import com.nobzzy.falacode.dto.LessonDto;
 import com.nobzzy.falacode.entity.Course;
+import com.nobzzy.falacode.entity.Exercise;
+import com.nobzzy.falacode.entity.Lesson;
 import com.nobzzy.falacode.entity.Module;
 import com.nobzzy.falacode.repository.CourseRepository;
+import com.nobzzy.falacode.repository.ExerciseRepository;
+import com.nobzzy.falacode.repository.LessonRepository;
 import com.nobzzy.falacode.repository.ModuleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,6 +41,12 @@ public class LessonControllerIntegrationTest {
 
     @Autowired
     private ModuleRepository moduleRepository;
+
+    @Autowired
+    private LessonRepository lessonRepository;
+
+    @Autowired
+    private ExerciseRepository exerciseRepository;
 
     private Module savedModule;
 
@@ -183,6 +193,41 @@ public class LessonControllerIntegrationTest {
                 .andExpect(status().isNoContent());
 
         mockMvc.perform(get("/api/lessons/{id}", lessonId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/lessons/{id} - Should delete lesson and associated exercises")
+    void shouldDeleteLessonAndAssociatedExercises() throws Exception {
+        Course course = courseRepository.save(Course.builder()
+                .title("Parent Course")
+                .isPublished(true)
+                .build());
+
+        Module module = moduleRepository.save(Module.builder()
+                .title("Module with lessons")
+                .isPublished(false)
+                .course(course)
+                .build());
+
+        Lesson lesson = lessonRepository.save(Lesson.builder()
+                .title("Lesson with exercises")
+                .isPublished(false)
+                .module(module)
+                .build());
+
+        Exercise exercise = Exercise.builder()
+                .title("New exercise")
+                .lesson(lesson)
+                .build();
+
+        lesson.getExercises().add(exercise);
+        exerciseRepository.save(exercise);
+
+        mockMvc.perform(delete("/api/lessons/{id}", lesson.getId()))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/exercises/{id}", exercise.getId()))
                 .andExpect(status().isNotFound());
     }
 }
