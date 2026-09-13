@@ -2,7 +2,11 @@ package com.nobzzy.falacode.controller;
 
 import com.nobzzy.falacode.dto.ModuleDto;
 import com.nobzzy.falacode.entity.Course;
+import com.nobzzy.falacode.entity.Lesson;
+import com.nobzzy.falacode.entity.Module;
 import com.nobzzy.falacode.repository.CourseRepository;
+import com.nobzzy.falacode.repository.LessonRepository;
+import com.nobzzy.falacode.repository.ModuleRepository;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +35,12 @@ public class ModuleControllerIntegrationTest {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private ModuleRepository moduleRepository;
+
+    @Autowired
+    private LessonRepository lessonRepository;
 
     @Test
     @DisplayName("POST /api/courses/{courseId}/modules - Should create module successfully")
@@ -166,6 +176,35 @@ public class ModuleControllerIntegrationTest {
                 .andExpect(status().isNoContent());
 
         mockMvc.perform(get("/api/modules/{id}", moduleId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/modules/{id} - Should delete module and associated lessons")
+    void shouldDeleteModuleAndAssociatedLessons() throws Exception {
+        Course course = courseRepository.save(Course.builder()
+                .title("Parent Course")
+                .isPublished(true)
+                .build());
+
+        Module module = moduleRepository.save(Module.builder()
+                .title("Module with lessons")
+                .isPublished(false)
+                .course(course)
+                .build());
+
+        Lesson lesson = Lesson.builder()
+                .title("New Lesson")
+                .isPublished(false)
+                .module(module)
+                .build();
+        module.getLessons().add(lesson);
+        lessonRepository.save(lesson);
+
+        mockMvc.perform(delete("/api/modules/{id}", module.getId()))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/lessons/{id}", lesson.getId()))
                 .andExpect(status().isNotFound());
     }
 }
