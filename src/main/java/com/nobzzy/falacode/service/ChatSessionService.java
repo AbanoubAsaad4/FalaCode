@@ -26,12 +26,9 @@ public class ChatSessionService {
 
     // CREATE
     @Transactional
-    public ChatSessionDto createChatSession(ChatSessionDto chatSessionDto) {
-        Exercise exercise = null;
-        if (chatSessionDto.getExerciseId() != null) {
-            exercise = exerciseRepository.findById(chatSessionDto.getExerciseId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Exercise not found with id: " + chatSessionDto.getExerciseId()));
-        }
+    public ChatSessionDto createChatSession(Long exerciseId, ChatSessionDto chatSessionDto) {
+        Exercise exercise = exerciseRepository.findById(exerciseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found with id: " + exerciseId));
 
         ChatSession chatSession = mapToEntity(chatSessionDto);
         chatSession.setExercise(exercise);

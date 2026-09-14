@@ -20,9 +20,9 @@ public class ChatSessionController {
     }
 
     // CREATE
-    @PostMapping("/chat-sessions")
-    public ResponseEntity<ChatSessionDto> createChatSession(@Valid @RequestBody ChatSessionDto chatSessionDto) {
-        return new ResponseEntity<>(chatSessionService.createChatSession(chatSessionDto), HttpStatus.CREATED);
+    @PostMapping("/exercises/{exerciseId}/chat-sessions")
+    public ResponseEntity<ChatSessionDto> createChatSession(@PathVariable Long exerciseId, @Valid @RequestBody ChatSessionDto chatSessionDto) {
+        return new ResponseEntity<>(chatSessionService.createChatSession(exerciseId, chatSessionDto), HttpStatus.CREATED);
     }
 
     // READ ALL

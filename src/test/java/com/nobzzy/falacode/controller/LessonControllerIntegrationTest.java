@@ -67,7 +67,7 @@ public class LessonControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /api/lessons - Should create lesson successfully")
+    @DisplayName("POST /api/modules/{moduleId}/lessons - Should create lesson successfully")
     void shouldCreateLesson() throws Exception {
         LessonDto lessonDto = LessonDto.builder()
                 .title("Introduction to Controllers")
@@ -76,7 +76,7 @@ public class LessonControllerIntegrationTest {
                 .moduleId(savedModule.getId())
                 .build();
 
-        mockMvc.perform(post("/api/lessons")
+        mockMvc.perform(post("/api/modules/{moduleId}/lessons", savedModule.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(lessonDto)))
                 .andExpect(status().isCreated())
@@ -96,7 +96,7 @@ public class LessonControllerIntegrationTest {
                 .moduleId(savedModule.getId())
                 .build();
 
-        String response = mockMvc.perform(post("/api/lessons")
+        String response = mockMvc.perform(post("/api/modules/{moduleId}/lessons", savedModule.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(lessonDto)))
                 .andExpect(status().isCreated())
@@ -127,7 +127,7 @@ public class LessonControllerIntegrationTest {
                 .moduleId(savedModule.getId())
                 .build();
 
-        mockMvc.perform(post("/api/lessons")
+        mockMvc.perform(post("/api/modules/{moduleId}/lessons", savedModule.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(lessonDto)))
                 .andExpect(status().isCreated());
@@ -147,7 +147,7 @@ public class LessonControllerIntegrationTest {
                 .moduleId(savedModule.getId())
                 .build();
 
-        String response = mockMvc.perform(post("/api/lessons")
+        String response = mockMvc.perform(post("/api/modules/{moduleId}/lessons", savedModule.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(initialDto)))
                 .andExpect(status().isCreated())
@@ -181,7 +181,7 @@ public class LessonControllerIntegrationTest {
                 .moduleId(savedModule.getId())
                 .build();
 
-        String response = mockMvc.perform(post("/api/lessons")
+        String response = mockMvc.perform(post("/api/modules/{moduleId}/lessons", savedModule.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(lessonDto)))
                 .andExpect(status().isCreated())

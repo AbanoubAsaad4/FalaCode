@@ -82,14 +82,14 @@ public class ChatSessionControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /api/chat-sessions - Should create chat session successfully")
+    @DisplayName("POST /api/exercises/{exerciseId}/chat-sessions - Should create chat session successfully")
     void shouldCreateChatSession() throws Exception {
         ChatSessionDto chatSessionDto = ChatSessionDto.builder()
                 .title("Help with Infinite Loop")
                 .exerciseId(savedExercise.getId())
                 .build();
 
-        mockMvc.perform(post("/api/chat-sessions")
+        mockMvc.perform(post("/api/exercises/{exerciseId}/chat-sessions", savedExercise.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(chatSessionDto)))
                 .andExpect(status().isCreated())

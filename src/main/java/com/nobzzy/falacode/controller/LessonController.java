@@ -20,9 +20,9 @@ public class LessonController {
     }
 
     // CREATE
-    @PostMapping("/lessons")
-    public ResponseEntity<LessonDto> createLesson(@Valid @RequestBody LessonDto lessonDto) {
-        return new ResponseEntity<>(lessonService.createLesson(lessonDto), HttpStatus.CREATED);
+    @PostMapping("/modules/{moduleId}/lessons")
+    public ResponseEntity<LessonDto> createLesson(@PathVariable Long moduleId, @Valid @RequestBody LessonDto lessonDto) {
+        return new ResponseEntity<>(lessonService.createLesson(moduleId, lessonDto), HttpStatus.CREATED);
     }
 
     // READ ALL

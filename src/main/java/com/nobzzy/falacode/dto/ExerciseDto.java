@@ -24,11 +24,9 @@ public class ExerciseDto {
     private String difficulty;
     private Integer displayOrder;
     private Integer points;
-
-    @NotNull(message = "Lesson ID is required")
     private Long lessonId;
-
     private List<Long> submissions;
+    private List<Long> chatSessions;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

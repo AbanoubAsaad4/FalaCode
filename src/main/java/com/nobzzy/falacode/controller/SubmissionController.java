@@ -20,9 +20,9 @@ public class SubmissionController {
     }
 
     // CREATE
-    @PostMapping("/submissions")
-    public ResponseEntity<SubmissionDto> createSubmission(@Valid @RequestBody SubmissionDto submissionDto) {
-        return new ResponseEntity<>(submissionService.createSubmission(submissionDto), HttpStatus.CREATED);
+    @PostMapping("/exercises/{exerciseId}/submissions")
+    public ResponseEntity<SubmissionDto> createSubmission(@PathVariable Long exerciseId, @Valid @RequestBody SubmissionDto submissionDto) {
+        return new ResponseEntity<>(submissionService.createSubmission(exerciseId, submissionDto), HttpStatus.CREATED);
     }
 
     // READ ALL

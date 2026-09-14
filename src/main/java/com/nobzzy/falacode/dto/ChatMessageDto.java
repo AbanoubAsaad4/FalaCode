@@ -24,8 +24,6 @@ public class ChatMessageDto {
     @Size(max = 20, message = "Sender type cannot exceed 20 characters")
     private String sender;
 
-    @NotNull(message = "Chat Session ID is required")
     private Long chatSessionId;
-
     private LocalDateTime createdAt;
 }

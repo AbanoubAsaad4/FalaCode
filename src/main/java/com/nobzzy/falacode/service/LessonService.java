@@ -1,6 +1,7 @@
 package com.nobzzy.falacode.service;
 
 import com.nobzzy.falacode.dto.LessonDto;
+import com.nobzzy.falacode.entity.Exercise;
 import com.nobzzy.falacode.entity.Lesson;
 import com.nobzzy.falacode.entity.Module;
 import com.nobzzy.falacode.exception.ResourceNotFoundException;
@@ -25,9 +26,9 @@ public class LessonService {
 
     // CREATE
     @Transactional
-    public LessonDto createLesson(LessonDto lessonDto) {
-        Module module = moduleRepository.findById(lessonDto.getModuleId()).
-                orElseThrow(() -> new ResourceNotFoundException("Module not found with id: " + lessonDto.getModuleId()));
+    public LessonDto createLesson(Long moduleId, LessonDto lessonDto) {
+        Module module = moduleRepository.findById(moduleId).
+                orElseThrow(() -> new ResourceNotFoundException("Module not found with id: " + moduleId));
 
         Lesson lesson = mapToEntity(lessonDto);
         lesson.setModule(module);
@@ -100,7 +101,12 @@ public class LessonService {
                 .title(lesson.getTitle())
                 .displayOrder(lesson.getDisplayOrder())
                 .published(lesson.isPublished())
-                .moduleId(lesson.getModule() != null ? lesson.getModule().getId() : null)
+                .moduleId(lesson.getModule() != null
+                        ? lesson.getModule().getId()
+                        : null)
+                .exercises(lesson.getExercises() != null
+                        ? lesson.getExercises().stream().map(Exercise::getId).toList()
+                        : List.of())
                 .createdAt(lesson.getCreatedAt())
                 .updatedAt(lesson.getUpdatedAt())
                 .build();

@@ -20,9 +20,9 @@ public class ExerciseController {
     }
 
     // CREATE
-    @PostMapping("/exercises")
-    public ResponseEntity<ExerciseDto> createExercise(@Valid @RequestBody ExerciseDto exerciseDto) {
-        return new ResponseEntity<>(exerciseService.createExercise(exerciseDto), HttpStatus.CREATED);
+    @PostMapping("/lessons/{lessonId}/exercises")
+    public ResponseEntity<ExerciseDto> createExercise(@PathVariable Long lessonId, @Valid @RequestBody ExerciseDto exerciseDto) {
+        return new ResponseEntity<>(exerciseService.createExercise(lessonId, exerciseDto), HttpStatus.CREATED);
     }
 
     // READ ALL

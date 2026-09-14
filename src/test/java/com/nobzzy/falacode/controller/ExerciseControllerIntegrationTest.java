@@ -77,7 +77,7 @@ class ExerciseControllerIntegrationTest {
     }
 
     @Nested
-    @DisplayName("POST /api/exercises")
+    @DisplayName("POST /api/lessons/{lessonId}/exercises")
     class CreateExerciseTests {
 
         @Test
@@ -93,7 +93,7 @@ class ExerciseControllerIntegrationTest {
                     .lessonId(testLesson.getId())
                     .build();
 
-            mockMvc.perform(post("/api/exercises")
+            mockMvc.perform(post("/api/lessons/{lessonId}/exercises", testLesson.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(requestDto)))
                     .andExpect(status().isCreated())
@@ -115,7 +115,7 @@ class ExerciseControllerIntegrationTest {
                     .lessonId(testLesson.getId())
                     .build();
 
-            mockMvc.perform(post("/api/exercises")
+            mockMvc.perform(post("/api/lessons/{lessonId}/exercises", testLesson.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(requestDto)))
                     .andExpect(status().isBadRequest());
@@ -129,7 +129,7 @@ class ExerciseControllerIntegrationTest {
                     .lessonId(999L)
                     .build();
 
-            mockMvc.perform(post("/api/exercises")
+            mockMvc.perform(post("/api/lessons/{lessonId}/exercises", 999L)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(requestDto)))
                     .andExpect(status().isNotFound());
@@ -153,11 +153,11 @@ class ExerciseControllerIntegrationTest {
                     .lessonId(testLesson.getId())
                     .build();
 
-            mockMvc.perform(post("/api/exercises")
+            mockMvc.perform(post("/api/lessons/{lessonId}/exercises", testLesson.getId())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(ex1)));
 
-            mockMvc.perform(post("/api/exercises")
+            mockMvc.perform(post("/api/lessons/{lessonId}/exercises", testLesson.getId())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(ex2)));
 
@@ -176,7 +176,7 @@ class ExerciseControllerIntegrationTest {
                     .lessonId(testLesson.getId())
                     .build();
 
-            String response = mockMvc.perform(post("/api/exercises")
+            String response = mockMvc.perform(post("/api/lessons/{lessonId}/exercises", testLesson.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(requestDto)))
                     .andExpect(status().isCreated())
@@ -205,7 +205,7 @@ class ExerciseControllerIntegrationTest {
                     .lessonId(testLesson.getId())
                     .build();
 
-            mockMvc.perform(post("/api/exercises")
+            mockMvc.perform(post("/api/lessons/{lessonId}/exercises", testLesson.getId())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(ex)));
 
@@ -229,7 +229,7 @@ class ExerciseControllerIntegrationTest {
                     .lessonId(testLesson.getId())
                     .build();
 
-            String response = mockMvc.perform(post("/api/exercises")
+            String response = mockMvc.perform(post("/api/lessons/{lessonId}/exercises", testLesson.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(initialDto)))
                     .andExpect(status().isCreated())
@@ -267,7 +267,7 @@ class ExerciseControllerIntegrationTest {
                     .lessonId(testLesson.getId())
                     .build();
 
-            String response = mockMvc.perform(post("/api/exercises")
+            String response = mockMvc.perform(post("/api/lessons/{lessonId}/exercises", testLesson.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(requestDto)))
                     .andExpect(status().isCreated())
