@@ -3,6 +3,7 @@ package com.nobzzy.falacode.service;
 import com.nobzzy.falacode.dto.ExerciseDto;
 import com.nobzzy.falacode.entity.Exercise;
 import com.nobzzy.falacode.entity.Lesson;
+import com.nobzzy.falacode.entity.Submission;
 import com.nobzzy.falacode.exception.ResourceNotFoundException;
 import com.nobzzy.falacode.repository.ExerciseRepository;
 import com.nobzzy.falacode.repository.LessonRepository;
@@ -114,6 +115,9 @@ public class ExerciseService {
                 .displayOrder(exercise.getDisplayOrder())
                 .points(exercise.getPoints())
                 .lessonId(exercise.getLesson() != null ? exercise.getLesson().getId() : null)
+                .submissions(exercise.getSubmissions() != null
+                        ? exercise.getSubmissions().stream().map(Submission::getId).toList()
+                        : List.of())
                 .build();
     }
 }

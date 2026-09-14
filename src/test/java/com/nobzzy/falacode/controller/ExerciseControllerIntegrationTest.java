@@ -1,14 +1,10 @@
 package com.nobzzy.falacode.controller;
 
+import com.nobzzy.falacode.entity.*;
+import com.nobzzy.falacode.entity.Module;
+import com.nobzzy.falacode.repository.*;
 import tools.jackson.databind.ObjectMapper;
 import com.nobzzy.falacode.dto.ExerciseDto;
-import com.nobzzy.falacode.entity.Course;
-import com.nobzzy.falacode.entity.Lesson;
-import com.nobzzy.falacode.entity.Module;
-import com.nobzzy.falacode.repository.CourseRepository;
-import com.nobzzy.falacode.repository.ExerciseRepository;
-import com.nobzzy.falacode.repository.LessonRepository;
-import com.nobzzy.falacode.repository.ModuleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -48,6 +44,9 @@ class ExerciseControllerIntegrationTest {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private SubmissionRepository submissionRepository;
 
     private Lesson testLesson;
 
@@ -289,5 +288,45 @@ class ExerciseControllerIntegrationTest {
             mockMvc.perform(delete("/api/exercises/{id}", 999L))
                     .andExpect(status().isNotFound());
         }
+    }
+
+    @Test
+    @DisplayName("DELETE /api/exercises/{id} - Should delete exercise and associated submissions")
+    void shouldDeleteExerciseAndAssociatedSubmissions() throws Exception {
+        Course course = courseRepository.save(Course.builder()
+                .title("Parent Course")
+                .isPublished(true)
+                .build());
+
+        Module module = moduleRepository.save(Module.builder()
+                .title("Module with lessons")
+                .isPublished(false)
+                .course(course)
+                .build());
+
+        Lesson lesson = lessonRepository.save(Lesson.builder()
+                .title("Lesson with exercises")
+                .isPublished(false)
+                .module(module)
+                .build());
+
+        Exercise exercise = exerciseRepository.save(Exercise.builder()
+                .title("Exercise with submissions")
+                .lesson(lesson)
+                .build());
+
+        Submission submission = Submission.builder()
+                .code("System.out.println(\"Cascade test\");")
+                .exercise(exercise)
+                .build();
+
+        exercise.getSubmissions().add(submission);
+        submissionRepository.save(submission);
+
+        mockMvc.perform(delete("/api/exercises/{id}", exercise.getId()))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/submissions/{id}", submission.getId()))
+                .andExpect(status().isNotFound());
     }
 }

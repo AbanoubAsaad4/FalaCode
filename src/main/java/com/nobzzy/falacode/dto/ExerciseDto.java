@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -26,6 +27,8 @@ public class ExerciseDto {
 
     @NotNull(message = "Lesson ID is required")
     private Long lessonId;
+
+    private List<Long> submissions;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
