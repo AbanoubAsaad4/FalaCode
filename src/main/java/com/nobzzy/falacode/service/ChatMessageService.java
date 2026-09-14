@@ -25,9 +25,9 @@ public class ChatMessageService {
 
     // CREATE
     @Transactional
-    public ChatMessageDto createChatMessage(ChatMessageDto chatMessageDto) {
-        ChatSession chatSession = chatSessionRepository.findById(chatMessageDto.getChatSessionId())
-                .orElseThrow(() -> new ResourceNotFoundException("ChatSession not found with id: " + chatMessageDto.getChatSessionId()));
+    public ChatMessageDto createChatMessage(Long chatSessionId, ChatMessageDto chatMessageDto) {
+        ChatSession chatSession = chatSessionRepository.findById(chatSessionId)
+                .orElseThrow(() -> new ResourceNotFoundException("ChatSession not found with id: " + chatSessionId));
 
         ChatMessage chatMessage = mapToEntity(chatMessageDto);
         chatMessage.setChatSession(chatSession);

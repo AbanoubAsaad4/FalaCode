@@ -69,7 +69,7 @@ class ChatSessionServiceTest {
             when(exerciseRepository.findById(30L)).thenReturn(Optional.of(sampleExercise));
             when(chatSessionRepository.save(any(ChatSession.class))).thenReturn(sampleChatSession);
 
-            ChatSessionDto result = chatSessionService.createChatSession(sampleChatSessionDto);
+            ChatSessionDto result = chatSessionService.createChatSession(30L, sampleChatSessionDto);
 
             assertThat(result).isNotNull();
             assertThat(result.getId()).isEqualTo(300L);
@@ -83,7 +83,7 @@ class ChatSessionServiceTest {
         void createChatSession_ThrowsException_WhenExerciseNotFound() {
             when(exerciseRepository.findById(30L)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> chatSessionService.createChatSession(sampleChatSessionDto))
+            assertThatThrownBy(() -> chatSessionService.createChatSession(30L, sampleChatSessionDto))
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessageContaining("Exercise not found with id: 30");
 

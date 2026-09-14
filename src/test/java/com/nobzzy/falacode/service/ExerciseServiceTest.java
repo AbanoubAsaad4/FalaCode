@@ -83,7 +83,7 @@ class ExerciseServiceTest {
             when(lessonRepository.findById(1L)).thenReturn(Optional.of(testLesson));
             when(exerciseRepository.save(any(Exercise.class))).thenReturn(testExercise);
 
-            ExerciseDto createdDto = exerciseService.createExercise(testExerciseDto);
+            ExerciseDto createdDto = exerciseService.createExercise(1L, testExerciseDto);
 
             assertThat(createdDto).isNotNull();
             assertThat(createdDto.getTitle()).isEqualTo("Create a Car Class");
@@ -99,7 +99,7 @@ class ExerciseServiceTest {
 
             testExerciseDto.setLessonId(99L);
 
-            assertThatThrownBy(() -> exerciseService.createExercise(testExerciseDto))
+            assertThatThrownBy(() -> exerciseService.createExercise(99L, testExerciseDto))
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessageContaining("Lesson not found with id: 99");
 

@@ -1,13 +1,13 @@
 package com.nobzzy.falacode.service;
 
 import com.nobzzy.falacode.dto.ExerciseDto;
+import com.nobzzy.falacode.entity.ChatSession;
 import com.nobzzy.falacode.entity.Exercise;
 import com.nobzzy.falacode.entity.Lesson;
 import com.nobzzy.falacode.entity.Submission;
 import com.nobzzy.falacode.exception.ResourceNotFoundException;
 import com.nobzzy.falacode.repository.ExerciseRepository;
 import com.nobzzy.falacode.repository.LessonRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +27,9 @@ public class ExerciseService {
 
     // CREATE
     @Transactional
-    public ExerciseDto createExercise(ExerciseDto exerciseDto) {
-        Lesson lesson = lessonRepository.findById(exerciseDto.getLessonId())
-                .orElseThrow(() -> new ResourceNotFoundException("Lesson not found with id: " + exerciseDto.getLessonId()));
+    public ExerciseDto createExercise(Long lessonId, ExerciseDto exerciseDto) {
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new ResourceNotFoundException("Lesson not found with id: " + lessonId));
 
         Exercise exercise = mapToEntity(exerciseDto);
         exercise.setLesson(lesson);
@@ -117,6 +117,9 @@ public class ExerciseService {
                 .lessonId(exercise.getLesson() != null ? exercise.getLesson().getId() : null)
                 .submissions(exercise.getSubmissions() != null
                         ? exercise.getSubmissions().stream().map(Submission::getId).toList()
+                        : List.of())
+                .chatSessions(exercise.getChatSessions() != null
+                        ? exercise.getChatSessions().stream().map(ChatSession::getId).toList()
                         : List.of())
                 .build();
     }

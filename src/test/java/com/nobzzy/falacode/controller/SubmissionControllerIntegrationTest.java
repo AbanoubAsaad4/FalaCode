@@ -84,14 +84,14 @@ public class SubmissionControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /api/submissions - Should create submission successfully")
+    @DisplayName("POST /api/exercises/{exerciseId}/submissions - Should create submission successfully")
     void shouldCreateSubmission() throws Exception {
         SubmissionDto submissionDto = SubmissionDto.builder()
                 .code("public String reverse(String s) { return new StringBuilder(s).reverse().toString(); }")
                 .exerciseId(savedExercise.getId())
                 .build();
 
-        mockMvc.perform(post("/api/submissions")
+        mockMvc.perform(post("/api/exercises/{exerciseId}/submissions", savedExercise.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(submissionDto)))
                 .andExpect(status().isCreated())
@@ -108,7 +108,7 @@ public class SubmissionControllerIntegrationTest {
                 .exerciseId(savedExercise.getId())
                 .build();
 
-        String response = mockMvc.perform(post("/api/submissions")
+        String response = mockMvc.perform(post("/api/exercises/{exerciseId}/submissions", savedExercise.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(submissionDto)))
                 .andExpect(status().isCreated())
@@ -137,7 +137,7 @@ public class SubmissionControllerIntegrationTest {
                 .exerciseId(savedExercise.getId())
                 .build();
 
-        mockMvc.perform(post("/api/submissions")
+        mockMvc.perform(post("/api/exercises/{exerciseId}/submissions", savedExercise.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(submissionDto)))
                 .andExpect(status().isCreated());
@@ -155,7 +155,7 @@ public class SubmissionControllerIntegrationTest {
                 .exerciseId(savedExercise.getId())
                 .build();
 
-        String response = mockMvc.perform(post("/api/submissions")
+        String response = mockMvc.perform(post("/api/exercises/{exerciseId}/submissions", savedExercise.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(initialDto)))
                 .andExpect(status().isCreated())
@@ -189,7 +189,7 @@ public class SubmissionControllerIntegrationTest {
                 .exerciseId(savedExercise.getId())
                 .build();
 
-        String response = mockMvc.perform(post("/api/submissions")
+        String response = mockMvc.perform(post("/api/exercises/{exerciseId}/submissions", savedExercise.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(submissionDto)))
                 .andExpect(status().isCreated())

@@ -25,9 +25,9 @@ public class SubmissionService {
 
     // CREATE
     @Transactional
-    public SubmissionDto createSubmission(SubmissionDto submissionDto) {
-        Exercise exercise = exerciseRepository.findById(submissionDto.getExerciseId())
-                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found with id: " + submissionDto.getExerciseId()));
+    public SubmissionDto createSubmission(Long exerciseId, SubmissionDto submissionDto) {
+        Exercise exercise = exerciseRepository.findById(exerciseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found with id: " + exerciseId));
 
         Submission submission = mapToEntity(submissionDto);
         submission.setExercise(exercise);

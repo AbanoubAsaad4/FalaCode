@@ -20,9 +20,9 @@ public class ChatMessageController {
     }
 
     // CREATE
-    @PostMapping("/chat-messages")
-    public ResponseEntity<ChatMessageDto> createChatMessage(@Valid @RequestBody ChatMessageDto chatMessageDto) {
-        return new ResponseEntity<>(chatMessageService.createChatMessage(chatMessageDto), HttpStatus.CREATED);
+    @PostMapping("/chat-sessions/{chatSessionId}/chat-messages")
+    public ResponseEntity<ChatMessageDto> createChatMessage(@PathVariable Long chatSessionId, @Valid @RequestBody ChatMessageDto chatMessageDto) {
+        return new ResponseEntity<>(chatMessageService.createChatMessage(chatSessionId, chatMessageDto), HttpStatus.CREATED);
     }
 
     // READ ALL BY CHAT SESSION ID

@@ -2,6 +2,7 @@ package com.nobzzy.falacode.service;
 
 import com.nobzzy.falacode.dto.ModuleDto;
 import com.nobzzy.falacode.entity.Course;
+import com.nobzzy.falacode.entity.Lesson;
 import com.nobzzy.falacode.entity.Module;
 import com.nobzzy.falacode.exception.ResourceNotFoundException;
 import com.nobzzy.falacode.repository.CourseRepository;
@@ -117,7 +118,12 @@ public class ModuleService {
                 .description(module.getDescription())
                 .published(module.isPublished())
                 .displayOrder(module.getDisplayOrder())
-                .courseId(module.getCourse() != null ? module.getCourse().getId() : null)
+                .courseId(module.getCourse() != null
+                        ? module.getCourse().getId()
+                        : null)
+                .lessons(module.getLessons() != null
+                        ? module.getLessons().stream().map(Lesson::getId).toList()
+                        : List.of())
                 .createdAt(module.getCreatedAt())
                 .updatedAt(module.getUpdatedAt())
                 .build();

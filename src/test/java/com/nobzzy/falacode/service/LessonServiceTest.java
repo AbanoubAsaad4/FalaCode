@@ -73,7 +73,7 @@ class LessonServiceTest {
             when(moduleRepository.findById(10L)).thenReturn(Optional.of(sampleModule));
             when(lessonRepository.save(any(Lesson.class))).thenReturn(sampleLesson);
 
-            LessonDto result = lessonService.createLesson(sampleLessonDto);
+            LessonDto result = lessonService.createLesson(10L, sampleLessonDto);
 
             assertThat(result).isNotNull();
             assertThat(result.getId()).isEqualTo(100L);
@@ -87,7 +87,7 @@ class LessonServiceTest {
         void createLesson_ThrowsException_WhenModuleNotFound() {
             when(moduleRepository.findById(10L)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> lessonService.createLesson(sampleLessonDto))
+            assertThatThrownBy(() -> lessonService.createLesson(10L, sampleLessonDto))
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessageContaining("Module not found with id: 10");
 

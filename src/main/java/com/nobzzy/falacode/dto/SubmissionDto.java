@@ -22,9 +22,6 @@ public class SubmissionDto {
     private String status;
     private Integer score;
     private String feedback;
-
-    @NotNull(message = "Exercise ID is required")
     private Long exerciseId;
-
     private LocalDateTime createdAt;
 }

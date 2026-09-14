@@ -1,6 +1,7 @@
 package com.nobzzy.falacode.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,10 @@ public class LessonDto {
     @Size(max = 100, message = "Title cannot exceed 100 characters")
     private String title;
     private Integer displayOrder;
+
+    @NotNull(message = "Published status is required")
     private Boolean published;
+
     private Long moduleId;
     private List<Long> exercises;
     private LocalDateTime createdAt;

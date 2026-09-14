@@ -75,7 +75,7 @@ class SubmissionServiceTest {
             when(exerciseRepository.findById(20L)).thenReturn(Optional.of(sampleExercise));
             when(submissionRepository.save(any(Submission.class))).thenReturn(sampleSubmission);
 
-            SubmissionDto result = submissionService.createSubmission(sampleSubmissionDto);
+            SubmissionDto result = submissionService.createSubmission(20L, sampleSubmissionDto);
 
             assertThat(result).isNotNull();
             assertThat(result.getId()).isEqualTo(200L);
@@ -89,7 +89,7 @@ class SubmissionServiceTest {
         void createSubmission_ThrowsException_WhenExerciseNotFound() {
             when(exerciseRepository.findById(20L)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> submissionService.createSubmission(sampleSubmissionDto))
+            assertThatThrownBy(() -> submissionService.createSubmission(20L, sampleSubmissionDto))
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessageContaining("Exercise not found with id: 20");
 
