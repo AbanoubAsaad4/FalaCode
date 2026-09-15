@@ -1,6 +1,7 @@
 package com.nobzzy.falacode.service;
 
 import com.nobzzy.falacode.dto.UserDto;
+import com.nobzzy.falacode.entity.MasteryRecord;
 import com.nobzzy.falacode.entity.User;
 import com.nobzzy.falacode.exception.EmailAlreadyExistsException;
 import com.nobzzy.falacode.exception.ResourceNotFoundException;
@@ -86,6 +87,9 @@ public class UserService {
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
+                .masteryRecordIds(user.getMasteryRecords() != null
+                        ? user.getMasteryRecords().stream().map(MasteryRecord::getId).toList()
+                        : List.of())
                 .build();
     }
 }
