@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,4 +30,6 @@ public class UserDto {
             message = "Password must be at least 8 characters long and contain a number and a symbol"
     )
     private String password;
+
+    private List<Long> masteryRecordIds;
 }
